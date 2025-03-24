@@ -10,20 +10,18 @@ Please see LICENSE files in the repository root for full details.
 */
 
 import React from "react";
-import { MatrixError, RuleId, TweakName, SyncState } from "matrix-js-sdk/src/matrix";
+import { MatrixError, RuleId, TweakName, SyncState, TypedEventEmitter } from "matrix-js-sdk/src/matrix";
 import {
-    CallError,
+    type CallError,
     CallErrorCode,
     CallEvent,
     CallParty,
     CallState,
     CallType,
     FALLBACK_ICE_SERVER,
-    MatrixCall,
+    type MatrixCall,
 } from "matrix-js-sdk/src/webrtc/call";
 import { logger } from "matrix-js-sdk/src/logger";
-import EventEmitter from "events";
-import { PushProcessor } from "matrix-js-sdk/src/pushprocessor";
 import { CallEventHandlerEvent } from "matrix-js-sdk/src/webrtc/callEventHandler";
 
 import { MatrixClientPeg } from "./MatrixClientPeg";
@@ -49,9 +47,9 @@ import { Container, WidgetLayoutStore } from "./stores/widgets/WidgetLayoutStore
 import IncomingLegacyCallToast, { getIncomingLegacyCallToastKey } from "./toasts/IncomingLegacyCallToast";
 import ToastStore from "./stores/ToastStore";
 import Resend from "./Resend";
-import { ViewRoomPayload } from "./dispatcher/payloads/ViewRoomPayload";
+import { type ViewRoomPayload } from "./dispatcher/payloads/ViewRoomPayload";
 import { InviteKind } from "./components/views/dialogs/InviteDialogTypes";
-import { OpenInviteDialogPayload } from "./dispatcher/payloads/OpenInviteDialogPayload";
+import { type OpenInviteDialogPayload } from "./dispatcher/payloads/OpenInviteDialogPayload";
 import { findDMForUser } from "./utils/dm/findDMForUser";
 import { getJoinedNonFunctionalMembers } from "./utils/room/getJoinedNonFunctionalMembers";
 import { localNotificationsAreSilenced } from "./utils/notifications";
@@ -137,14 +135,23 @@ export enum LegacyCallHandlerEvent {
     CallChangeRoom = "call_change_room",
     SilencedCallsChanged = "silenced_calls_changed",
     CallState = "call_state",
+    ProtocolSupport = "protocol_support",
 }
+
+type EventEmitterMap = {
+    [LegacyCallHandlerEvent.CallsChanged]: (calls: Map<string, MatrixCall>) => void;
+    [LegacyCallHandlerEvent.CallChangeRoom]: (call: MatrixCall) => void;
+    [LegacyCallHandlerEvent.SilencedCallsChanged]: (calls: Set<string>) => void;
+    [LegacyCallHandlerEvent.CallState]: (mappedRoomId: string | null, status: CallState) => void;
+    [LegacyCallHandlerEvent.ProtocolSupport]: () => void;
+};
 
 /**
  * LegacyCallHandler manages all currently active calls. It should be used for
  * placing, answering, rejecting and hanging up calls. It also handles ringing,
  * PSTN support and other things.
  */
-export default class LegacyCallHandler extends EventEmitter {
+export default class LegacyCallHandler extends TypedEventEmitter<LegacyCallHandlerEvent, EventEmitterMap> {
     private calls = new Map<string, MatrixCall>(); // roomId -> call
     // Calls started as an attended transfer, ie. with the intention of transferring another
     // call with a different party to this one.
@@ -271,15 +278,13 @@ export default class LegacyCallHandler extends EventEmitter {
                 this.supportsPstnProtocol = null;
             }
 
-            dis.dispatch({ action: Action.PstnSupportUpdated });
-
             if (protocols[PROTOCOL_SIP_NATIVE] !== undefined && protocols[PROTOCOL_SIP_VIRTUAL] !== undefined) {
                 this.supportsSipNativeVirtual = Boolean(
                     protocols[PROTOCOL_SIP_NATIVE] && protocols[PROTOCOL_SIP_VIRTUAL],
                 );
             }
 
-            dis.dispatch({ action: Action.VirtualRoomSupportUpdated });
+            this.emit(LegacyCallHandlerEvent.ProtocolSupport);
         } catch (e) {
             if (maxTries === 1) {
                 logger.log("Failed to check for protocol support and no retries remain: assuming no support", e);
@@ -296,8 +301,8 @@ export default class LegacyCallHandler extends EventEmitter {
         return !!SdkConfig.getObject("voip")?.get("obey_asserted_identity");
     }
 
-    public getSupportsPstnProtocol(): boolean | null {
-        return this.supportsPstnProtocol;
+    public getSupportsPstnProtocol(): boolean {
+        return this.supportsPstnProtocol ?? false;
     }
 
     public getSupportsVirtualRooms(): boolean | null {
@@ -568,6 +573,7 @@ export default class LegacyCallHandler extends EventEmitter {
         if (!mappedRoomId || !this.matchesCallForThisRoom(call)) return;
 
         this.setCallState(call, newState);
+        // XXX: this is used by the IPC into Electron to keep device awake
         dis.dispatch({
             action: "call_state",
             room_id: mappedRoomId,
@@ -589,7 +595,7 @@ export default class LegacyCallHandler extends EventEmitter {
 
         switch (newState) {
             case CallState.Ringing: {
-                const incomingCallPushRule = new PushProcessor(MatrixClientPeg.safeGet()).getPushRuleById(
+                const incomingCallPushRule = MatrixClientPeg.safeGet().pushProcessor.getPushRuleById(
                     RuleId.IncomingCall,
                 );
                 const pushRuleEnabled = incomingCallPushRule?.enabled;

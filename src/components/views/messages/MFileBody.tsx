@@ -6,9 +6,9 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import React, { AllHTMLAttributes, createRef } from "react";
+import React, { type AllHTMLAttributes, createRef } from "react";
 import { logger } from "matrix-js-sdk/src/logger";
-import { MediaEventContent } from "matrix-js-sdk/src/types";
+import { type MediaEventContent } from "matrix-js-sdk/src/types";
 import { Button } from "@vector-im/compound-web";
 import { DownloadIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
 
@@ -18,7 +18,7 @@ import AccessibleButton from "../elements/AccessibleButton";
 import { mediaFromContent } from "../../../customisations/Media";
 import ErrorDialog from "../dialogs/ErrorDialog";
 import { downloadLabelForFile, presentableTextForFile } from "../../../utils/FileUtils";
-import { IBodyProps } from "./IBodyProps";
+import { type IBodyProps } from "./IBodyProps";
 import { FileDownloader } from "../../../utils/FileDownloader";
 import TextWithTooltip from "../elements/TextWithTooltip";
 import RoomContext, { TimelineRenderingType } from "../../../contexts/RoomContext";
@@ -93,7 +93,7 @@ export function computedStyle(element: HTMLElement | null): string {
 
 interface IProps extends IBodyProps {
     /* whether or not to show the default placeholder for the file. Defaults to true. */
-    showGenericPlaceholder: boolean;
+    showGenericPlaceholder?: boolean;
 }
 
 interface IState {
@@ -105,11 +105,6 @@ export default class MFileBody extends React.Component<IProps, IState> {
     declare public context: React.ContextType<typeof RoomContext>;
 
     public state: IState = {};
-
-    public static defaultProps = {
-        showGenericPlaceholder: true,
-    };
-
     private iframe: React.RefObject<HTMLIFrameElement> = createRef();
     private dummyLink: React.RefObject<HTMLAnchorElement> = createRef();
     private userDidClick = false;
@@ -191,15 +186,17 @@ export default class MFileBody extends React.Component<IProps, IState> {
         const contentUrl = this.getContentUrl();
         const contentFileSize = this.content.info ? this.content.info.size : null;
         const fileType = this.content.info?.mimetype ?? "application/octet-stream";
+        // defaultProps breaks types on IBodyProps, so instead define the default here.
+        const showGenericPlaceholder = this.props.showGenericPlaceholder ?? true;
 
         let showDownloadLink =
-            !this.props.showGenericPlaceholder ||
+            !showGenericPlaceholder ||
             (this.context.timelineRenderingType !== TimelineRenderingType.Room &&
                 this.context.timelineRenderingType !== TimelineRenderingType.Search &&
                 this.context.timelineRenderingType !== TimelineRenderingType.Pinned);
 
         let placeholder: React.ReactNode = null;
-        if (this.props.showGenericPlaceholder) {
+        if (showGenericPlaceholder) {
             placeholder = (
                 <AccessibleButton className="mx_MediaBody mx_MFileBody_info" onClick={this.onPlaceholderClick}>
                     <span className="mx_MFileBody_info_icon" />

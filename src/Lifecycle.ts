@@ -9,13 +9,19 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import { ReactNode } from "react";
-import { createClient, MatrixClient, SSOAction, OidcTokenRefresher, decodeBase64 } from "matrix-js-sdk/src/matrix";
-import { AESEncryptedSecretStoragePayload } from "matrix-js-sdk/src/types";
-import { QueryDict } from "matrix-js-sdk/src/utils";
+import { type ReactNode } from "react";
+import {
+    createClient,
+    type MatrixClient,
+    SSOAction,
+    type OidcTokenRefresher,
+    decodeBase64,
+} from "matrix-js-sdk/src/matrix";
+import { type AESEncryptedSecretStoragePayload } from "matrix-js-sdk/src/types";
+import { type QueryDict } from "matrix-js-sdk/src/utils";
 import { logger } from "matrix-js-sdk/src/logger";
 
-import { IMatrixClientCreds, MatrixClientPeg, MatrixClientPegAssignOpts } from "./MatrixClientPeg";
+import { type IMatrixClientCreds, MatrixClientPeg, type MatrixClientPegAssignOpts } from "./MatrixClientPeg";
 import { ModuleRunner } from "./modules/ModuleRunner";
 import EventIndexPeg from "./indexing/EventIndexPeg";
 import createMatrixClient from "./utils/createMatrixClient";
@@ -50,12 +56,12 @@ import { setSentryUser } from "./sentry";
 import SdkConfig from "./SdkConfig";
 import { DialogOpener } from "./utils/DialogOpener";
 import { Action } from "./dispatcher/actions";
-import { OverwriteLoginPayload } from "./dispatcher/payloads/OverwriteLoginPayload";
+import { type OverwriteLoginPayload } from "./dispatcher/payloads/OverwriteLoginPayload";
 import { SdkContextClass } from "./contexts/SDKContext";
 import { messageForLoginError } from "./utils/ErrorUtils";
 import { completeOidcLogin } from "./utils/oidc/authorize";
 import { getOidcErrorMessage } from "./utils/oidc/error";
-import { OidcClientStore } from "./stores/oidc/OidcClientStore";
+import { type OidcClientStore } from "./stores/oidc/OidcClientStore";
 import {
     getStoredOidcClientId,
     getStoredOidcIdTokenClaims,
@@ -401,12 +407,47 @@ export function attemptTokenLogin(
 }
 
 /**
+ * Load the pickle key inside the credentials or create it if it does not exist for this device.
+ *
+ * @param credentials Holds the device to load/store the pickle key
+ *
+ * @returns {Promise} promise which resolves to the loaded or generated pickle key or undefined if
+ *    none was loaded nor generated
+ */
+async function loadOrCreatePickleKey(credentials: IMatrixClientCreds): Promise<string | undefined> {
+    // Try to load the pickle key
+    const userId = credentials.userId;
+    const deviceId = credentials.deviceId;
+    let pickleKey = (await PlatformPeg.get()?.getPickleKey(userId, deviceId ?? "")) ?? undefined;
+    if (!pickleKey) {
+        // Create it if it did not exist
+        pickleKey =
+            userId && deviceId
+                ? ((await PlatformPeg.get()?.createPickleKey(userId, deviceId)) ?? undefined)
+                : undefined;
+        if (pickleKey) {
+            logger.log(`Created pickle key for ${credentials.userId}|${credentials.deviceId}`);
+        } else {
+            logger.log("Pickle key not created");
+        }
+    } else {
+        logger.log(
+            `Pickle key already exists for ${credentials.userId}|${credentials.deviceId} do not create a new one`,
+        );
+    }
+
+    return pickleKey;
+}
+
+/**
  * Called after a successful token login or OIDC authorization.
  * Clear storage then save new credentials in storage
  * @param credentials as returned from login
  */
 async function onSuccessfulDelegatedAuthLogin(credentials: IMatrixClientCreds): Promise<void> {
     await clearStorage();
+    // SSO does not go through setLoggedIn so we need to load/create the pickle key here too
+    credentials.pickleKey = await loadOrCreatePickleKey(credentials);
     await persistCredentials(credentials);
 
     // remember that we just logged in
@@ -649,18 +690,8 @@ async function handleLoadSessionFailure(e: unknown): Promise<boolean> {
 export async function setLoggedIn(credentials: IMatrixClientCreds): Promise<MatrixClient> {
     credentials.freshLogin = true;
     stopMatrixClient();
-    const pickleKey =
-        credentials.userId && credentials.deviceId
-            ? await PlatformPeg.get()?.createPickleKey(credentials.userId, credentials.deviceId)
-            : null;
-
-    if (pickleKey) {
-        logger.log(`Created pickle key for ${credentials.userId}|${credentials.deviceId}`);
-    } else {
-        logger.log("Pickle key not created");
-    }
-
-    return doSetLoggedIn({ ...credentials, pickleKey: pickleKey ?? undefined }, true, true);
+    credentials.pickleKey = await loadOrCreatePickleKey(credentials);
+    return doSetLoggedIn(credentials, true, true);
 }
 
 /**
@@ -1049,9 +1080,9 @@ async function clearStorage(opts?: { deleteEverything?: boolean }): Promise<void
         window.localStorage.clear();
 
         try {
-            await StorageAccess.idbDelete("account", ACCESS_TOKEN_STORAGE_KEY);
+            await StorageAccess.idbClear("account");
         } catch (e) {
-            logger.error("idbDelete failed for account:mx_access_token", e);
+            logger.error("idbClear failed for account", e);
         }
 
         // now restore those invites, registration time and previously set device language

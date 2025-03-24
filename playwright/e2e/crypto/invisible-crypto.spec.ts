@@ -11,6 +11,7 @@ import { bootstrapCrossSigningForClient } from "../../pages/client.ts";
 
 /** Tests for the "invisible crypto" behaviour -- i.e., when the "exclude insecure devices" setting is enabled */
 test.describe("Invisible cryptography", () => {
+    test.slow();
     test.use({
         displayName: "Alice",
         botCreateOpts: { displayName: "Bob" },
@@ -51,6 +52,6 @@ test.describe("Invisible cryptography", () => {
         /* should show an error for a message from a previously verified device */
         await bobSecondDevice.sendMessage(testRoomId, "test encrypted from user that was previously verified");
         const lastTile = page.locator(".mx_EventTile_last");
-        await expect(lastTile).toContainText("Sender's verified identity has changed");
+        await expect(lastTile).toContainText("Sender's verified identity was reset");
     });
 });

@@ -6,9 +6,10 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import React, { createRef, SyntheticEvent, MouseEvent, StrictMode } from "react";
-import { MsgType } from "matrix-js-sdk/src/matrix";
+import React, { createRef, type SyntheticEvent, type MouseEvent, StrictMode } from "react";
+import { MsgType, PushRuleKind } from "matrix-js-sdk/src/matrix";
 import { TooltipProvider } from "@vector-im/compound-web";
+import { PushProcessor } from "matrix-js-sdk/src/pushprocessor";
 
 import * as HtmlUtils from "../../../HtmlUtils";
 import { formatDate } from "../../../DateUtils";
@@ -26,15 +27,16 @@ import QuestionDialog from "../dialogs/QuestionDialog";
 import MessageEditHistoryDialog from "../dialogs/MessageEditHistoryDialog";
 import EditMessageComposer from "../rooms/EditMessageComposer";
 import LinkPreviewGroup from "../rooms/LinkPreviewGroup";
-import { IBodyProps } from "./IBodyProps";
+import { type IBodyProps } from "./IBodyProps";
 import RoomContext from "../../../contexts/RoomContext";
 import AccessibleButton from "../elements/AccessibleButton";
 import { options as linkifyOpts } from "../../../linkify-matrix";
 import { getParentEventId } from "../../../utils/Reply";
 import { EditWysiwygComposer } from "../rooms/wysiwyg_composer";
-import { IEventTileOps } from "../rooms/EventTile";
+import { type IEventTileOps } from "../rooms/EventTile";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 import CodeBlock from "./CodeBlock";
+import { Pill, PillType } from "../elements/Pill";
 import { ReactRootManager } from "../../../utils/react";
 
 interface IState {
@@ -99,6 +101,19 @@ export default class TextualBody extends React.Component<IBodyProps, IState> {
                     this.wrapPreInReact(pres[i]);
                 }
             }
+        }
+
+        // Highlight notification keywords using pills
+        const pushDetails = this.props.mxEvent.getPushDetails();
+        if (
+            pushDetails.rule?.enabled &&
+            pushDetails.rule.kind === PushRuleKind.ContentSpecific &&
+            pushDetails.rule.pattern
+        ) {
+            this.pillifyNotificationKeywords(
+                [content],
+                PushProcessor.getPushRuleGlobRegex(pushDetails.rule.pattern, true),
+            );
         }
     }
 
@@ -207,6 +222,49 @@ export default class TextualBody extends React.Component<IBodyProps, IState> {
             }
 
             node = node.nextSibling as Element;
+        }
+    }
+
+    /**
+     * Marks the text that activated a push-notification keyword pattern.
+     */
+    private pillifyNotificationKeywords(nodes: ArrayLike<Element>, exp: RegExp): void {
+        let node: Node | null = nodes[0];
+        while (node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const text = node.nodeValue;
+                if (!text) {
+                    node = node.nextSibling;
+                    continue;
+                }
+                const match = text.match(exp);
+                if (!match || match.length < 2) {
+                    node = node.nextSibling;
+                    continue;
+                }
+                const keywordText = match[1];
+                const idx = match.index!;
+                const before = text.substring(0, idx);
+                const after = text.substring(idx + keywordText.length);
+
+                const container = document.createElement("span");
+                const newContent = (
+                    <>
+                        {before}
+                        <TooltipProvider>
+                            <Pill text={keywordText} type={PillType.Keyword} />
+                        </TooltipProvider>
+                        {after}
+                    </>
+                );
+                this.reactRoots.render(newContent, container, node);
+
+                node.parentNode?.replaceChild(container, node);
+            } else if (node.childNodes && node.childNodes.length) {
+                this.pillifyNotificationKeywords(node.childNodes as NodeListOf<Element>, exp);
+            }
+
+            node = node.nextSibling;
         }
     }
 

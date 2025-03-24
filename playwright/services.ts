@@ -5,136 +5,54 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import { test as base } from "@playwright/test";
-import mailhog from "mailhog";
-import { GenericContainer, Network, StartedNetwork, StartedTestContainer, Wait } from "testcontainers";
-import { PostgreSqlContainer, StartedPostgreSqlContainer } from "@testcontainers/postgresql";
+import { test as base } from "@element-hq/element-web-playwright-common";
+import {
+    type Services as BaseServices,
+    type WorkerOptions as BaseWorkerOptions,
+} from "@element-hq/element-web-playwright-common/lib/fixtures";
+import { type HomeserverContainer } from "@element-hq/element-web-playwright-common/lib/testcontainers";
 
-import { SynapseConfigOptions, SynapseContainer } from "./testcontainers/synapse.ts";
-import { ContainerLogger } from "./testcontainers/utils.ts";
-import { StartedMatrixAuthenticationServiceContainer } from "./testcontainers/mas.ts";
-import { HomeserverContainer, StartedHomeserverContainer } from "./testcontainers/HomeserverContainer.ts";
+import { type OAuthServer } from "./plugins/oauth_server";
+import { DendriteContainer, PineconeContainer } from "./testcontainers/dendrite";
+import { type HomeserverType } from "./plugins/homeserver";
+import { SynapseContainer } from "./testcontainers/synapse";
 
-export interface Services {
-    logger: ContainerLogger;
-
-    network: StartedNetwork;
-    postgres: StartedPostgreSqlContainer;
-
-    mailhog: StartedTestContainer;
-    mailhogClient: mailhog.API;
-
-    synapseConfigOptions: SynapseConfigOptions;
-    _homeserver: HomeserverContainer<any>;
-    homeserver: StartedHomeserverContainer;
-    mas?: StartedMatrixAuthenticationServiceContainer;
+export interface Services extends BaseServices {
+    // Set in legacyOAuthHomeserver only
+    oAuthServer?: OAuthServer;
 }
 
-export const test = base.extend<{}, Services>({
-    logger: [
-        // eslint-disable-next-line no-empty-pattern
-        async ({}, use) => {
-            const logger = new ContainerLogger();
-            await use(logger);
-        },
-        { scope: "worker" },
-    ],
-    network: [
-        // eslint-disable-next-line no-empty-pattern
-        async ({}, use) => {
-            const network = await new Network().start();
-            await use(network);
-            await network.stop();
-        },
-        { scope: "worker" },
-    ],
-    postgres: [
-        async ({ logger, network }, use) => {
-            const container = await new PostgreSqlContainer()
-                .withNetwork(network)
-                .withNetworkAliases("postgres")
-                .withLogConsumer(logger.getConsumer("postgres"))
-                .withTmpFs({
-                    "/dev/shm/pgdata/data": "",
-                })
-                .withEnvironment({
-                    PG_DATA: "/dev/shm/pgdata/data",
-                })
-                .withCommand([
-                    "-c",
-                    "shared_buffers=128MB",
-                    "-c",
-                    `fsync=off`,
-                    "-c",
-                    `synchronous_commit=off`,
-                    "-c",
-                    "full_page_writes=off",
-                ])
-                .start();
-            await use(container);
-            await container.stop();
-        },
-        { scope: "worker" },
-    ],
+export interface WorkerOptions extends BaseWorkerOptions {
+    homeserverType: HomeserverType;
+}
 
-    mailhog: [
-        async ({ logger, network }, use) => {
-            const container = await new GenericContainer("mailhog/mailhog:latest")
-                .withNetwork(network)
-                .withNetworkAliases("mailhog")
-                .withExposedPorts(8025)
-                .withLogConsumer(logger.getConsumer("mailhog"))
-                .withWaitStrategy(Wait.forListeningPorts())
-                .start();
-            await use(container);
-            await container.stop();
-        },
-        { scope: "worker" },
-    ],
-    mailhogClient: [
-        async ({ mailhog: container }, use) => {
-            await use(mailhog({ host: container.getHost(), port: container.getMappedPort(8025) }));
-        },
-        { scope: "worker" },
-    ],
-
-    synapseConfigOptions: [{}, { option: true, scope: "worker" }],
+export const test = base.extend<{}, Services & WorkerOptions>({
+    homeserverType: ["synapse", { option: true, scope: "worker" }],
     _homeserver: [
-        // eslint-disable-next-line no-empty-pattern
-        async ({}, use) => {
-            const container = new SynapseContainer();
-            await use(container);
-        },
-        { scope: "worker" },
-    ],
-    homeserver: [
-        async ({ logger, network, _homeserver: homeserver, synapseConfigOptions, mas }, use) => {
-            const container = await homeserver
-                .withNetwork(network)
-                .withNetworkAliases("homeserver")
-                .withLogConsumer(logger.getConsumer("synapse"))
-                .withConfig(synapseConfigOptions)
-                .start();
+        async ({ homeserverType }, use) => {
+            let container: HomeserverContainer<unknown>;
+            switch (homeserverType) {
+                case "synapse":
+                    container = new SynapseContainer();
+                    break;
+                case "dendrite":
+                    container = new DendriteContainer();
+                    break;
+                case "pinecone":
+                    container = new PineconeContainer();
+                    break;
+            }
 
             await use(container);
-            await container.stop();
-        },
-        { scope: "worker" },
-    ],
-    mas: [
-        // eslint-disable-next-line no-empty-pattern
-        async ({}, use) => {
-            // we stub the mas fixture to allow `homeserver` to depend on it to ensure
-            // when it is specified by `masHomeserver` it is started before the homeserver
-            await use(undefined);
         },
         { scope: "worker" },
     ],
 
-    context: async ({ logger, context, request, homeserver }, use, testInfo) => {
-        homeserver.setRequest(request);
-        await logger.testStarted(testInfo);
+    context: async ({ homeserverType, synapseConfig, context, _homeserver }, use, testInfo) => {
+        testInfo.skip(
+            !(_homeserver instanceof SynapseContainer) && Object.keys(synapseConfig).length > 0,
+            `Test specifies Synapse config options so is unsupported with ${homeserverType}`,
+        );
         await use(context);
-        await logger.testFinished(testInfo);
     },
 });

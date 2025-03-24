@@ -6,17 +6,23 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import { MatrixClient, Room, RoomState, EventType } from "matrix-js-sdk/src/matrix";
+import { type MatrixClient, type Room, type RoomState, EventType, type EmptyObject } from "matrix-js-sdk/src/matrix";
 import { KnownMembership } from "matrix-js-sdk/src/types";
 import { logger } from "matrix-js-sdk/src/logger";
 
 import SettingsStore from "../../settings/SettingsStore";
-import { DefaultTagID, OrderedDefaultTagIDs, RoomUpdateCause, TagID } from "./models";
-import { IListOrderingMap, ITagMap, ITagSortingMap, ListAlgorithm, SortAlgorithm } from "./algorithms/models";
-import { ActionPayload } from "../../dispatcher/payloads";
-import defaultDispatcher, { MatrixDispatcher } from "../../dispatcher/dispatcher";
+import { DefaultTagID, OrderedDefaultTagIDs, RoomUpdateCause, type TagID } from "./models";
+import {
+    type IListOrderingMap,
+    type ITagMap,
+    type ITagSortingMap,
+    ListAlgorithm,
+    SortAlgorithm,
+} from "./algorithms/models";
+import { type ActionPayload } from "../../dispatcher/payloads";
+import defaultDispatcher, { type MatrixDispatcher } from "../../dispatcher/dispatcher";
 import { readReceiptChangeIsFor } from "../../utils/read-receipts";
-import { FILTER_CHANGED, IFilterCondition } from "./filters/IFilterCondition";
+import { FILTER_CHANGED, type IFilterCondition } from "./filters/IFilterCondition";
 import { Algorithm, LIST_UPDATED_EVENT } from "./algorithms/Algorithm";
 import { EffectiveMembership, getEffectiveMembership, getEffectiveMembershipTag } from "../../utils/membership";
 import RoomListLayoutStore from "./RoomListLayoutStore";
@@ -25,21 +31,16 @@ import { AsyncStoreWithClient } from "../AsyncStoreWithClient";
 import { RoomNotificationStateStore } from "../notifications/RoomNotificationStateStore";
 import { VisibilityProvider } from "./filters/VisibilityProvider";
 import { SpaceWatcher } from "./SpaceWatcher";
-import { IRoomTimelineActionPayload } from "../../actions/MatrixActionCreators";
-import { RoomListStore as Interface, RoomListStoreEvent } from "./Interface";
-import { SlidingRoomListStoreClass } from "./SlidingRoomListStore";
+import { type IRoomTimelineActionPayload } from "../../actions/MatrixActionCreators";
+import { type RoomListStore as Interface, RoomListStoreEvent } from "./Interface";
 import { UPDATE_EVENT } from "../AsyncStore";
 import { SdkContextClass } from "../../contexts/SDKContext";
 import { getChangedOverrideRoomMutePushRules } from "./utils/roomMute";
 
-interface IState {
-    // state is tracked in underlying classes
-}
-
 export const LISTS_UPDATE_EVENT = RoomListStoreEvent.ListsUpdate;
 export const LISTS_LOADING_EVENT = RoomListStoreEvent.ListsLoading; // unused; used by SlidingRoomListStore
 
-export class RoomListStoreClass extends AsyncStoreWithClient<IState> implements Interface {
+export class RoomListStoreClass extends AsyncStoreWithClient<EmptyObject> implements Interface {
     /**
      * Set to true if you're running tests on the store. Should not be touched in
      * any other environment.
@@ -404,6 +405,9 @@ export class RoomListStoreClass extends AsyncStoreWithClient<IState> implements 
 
     public setTagSorting(tagId: TagID, sort: SortAlgorithm): void {
         this.setAndPersistTagSorting(tagId, sort);
+        // We'll always need an update after changing the sort order, so mark for update and trigger
+        // immediately.
+        this.updateFn.mark();
         this.updateFn.trigger();
     }
 
@@ -640,16 +644,9 @@ export default class RoomListStore {
 
     public static get instance(): Interface {
         if (!RoomListStore.internalInstance) {
-            if (SettingsStore.getValue("feature_sliding_sync")) {
-                logger.info("using SlidingRoomListStoreClass");
-                const instance = new SlidingRoomListStoreClass(defaultDispatcher, SdkContextClass.instance);
-                instance.start();
-                RoomListStore.internalInstance = instance;
-            } else {
-                const instance = new RoomListStoreClass(defaultDispatcher);
-                instance.start();
-                RoomListStore.internalInstance = instance;
-            }
+            const instance = new RoomListStoreClass(defaultDispatcher);
+            instance.start();
+            RoomListStore.internalInstance = instance;
         }
 
         return this.internalInstance;

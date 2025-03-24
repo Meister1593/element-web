@@ -7,11 +7,11 @@ Please see LICENSE files in the repository root for full details.
 */
 
 import {
-    IProtocol,
+    type IProtocol,
     LOCAL_NOTIFICATION_SETTINGS_PREFIX,
     MatrixEvent,
     PushRuleKind,
-    Room,
+    type Room,
     RuleId,
     TweakName,
 } from "matrix-js-sdk/src/matrix";
@@ -22,6 +22,7 @@ import { mocked } from "jest-mock";
 import { CallEventHandlerEvent } from "matrix-js-sdk/src/webrtc/callEventHandler";
 import fetchMock from "fetch-mock-jest";
 import { waitFor } from "jest-matrix-react";
+import { PushProcessor } from "matrix-js-sdk/src/pushprocessor";
 
 import LegacyCallHandler, {
     AudioID,
@@ -472,6 +473,9 @@ describe("LegacyCallHandler without third party protocols", () => {
         MatrixClientPeg.safeGet().getThirdpartyUser = (_proto, _params) => {
             throw new Error("Endpoint unsupported.");
         };
+
+        // @ts-expect-error
+        MatrixClientPeg.safeGet().pushProcessor = new PushProcessor(MatrixClientPeg.safeGet());
 
         audioElement = document.createElement("audio");
         audioElement.id = "remoteAudio";

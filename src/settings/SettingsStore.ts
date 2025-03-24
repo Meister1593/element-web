@@ -8,7 +8,7 @@ Please see LICENSE files in the repository root for full details.
 */
 
 import { logger } from "matrix-js-sdk/src/logger";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { ClientEvent, SyncState } from "matrix-js-sdk/src/matrix";
 
 import DeviceSettingsHandler from "./handlers/DeviceSettingsHandler";
@@ -20,12 +20,20 @@ import RoomSettingsHandler from "./handlers/RoomSettingsHandler";
 import ConfigSettingsHandler from "./handlers/ConfigSettingsHandler";
 import { _t } from "../languageHandler";
 import dis from "../dispatcher/dispatcher";
-import { IFeature, ISetting, LabGroup, SETTINGS, defaultWatchManager, SettingKey, Settings } from "./Settings";
+import {
+    type IFeature,
+    type ISetting,
+    type LabGroup,
+    SETTINGS,
+    defaultWatchManager,
+    type SettingKey,
+    type Settings,
+} from "./Settings";
 import LocalEchoWrapper from "./handlers/LocalEchoWrapper";
-import { CallbackFn as WatchCallbackFn } from "./WatchManager";
+import { type CallbackFn as WatchCallbackFn } from "./WatchManager";
 import { SettingLevel } from "./SettingLevel";
-import SettingsHandler from "./handlers/SettingsHandler";
-import { SettingUpdatedPayload } from "../dispatcher/payloads/SettingUpdatedPayload";
+import type SettingsHandler from "./handlers/SettingsHandler";
+import { type SettingUpdatedPayload } from "../dispatcher/payloads/SettingUpdatedPayload";
 import { Action } from "../dispatcher/actions";
 import PlatformSettingsHandler from "./handlers/PlatformSettingsHandler";
 import ReloadOnChangeController from "./controllers/ReloadOnChangeController";
@@ -690,6 +698,24 @@ export default class SettingsStore {
     }
 
     /**
+     * Migrate the setting for visible images to a setting.
+     */
+    private static migrateShowImagesToSettings(): void {
+        const MIGRATION_DONE_FLAG = "mx_show_images_migration_done";
+        if (localStorage.getItem(MIGRATION_DONE_FLAG)) return;
+
+        logger.info("Performing one-time settings migration of shown images to settings store");
+        const newValue = Object.fromEntries(
+            Object.keys(localStorage)
+                .filter((k) => k.startsWith("mx_ShowImage_"))
+                .map((k) => [k.slice("mx_ShowImage_".length), true]),
+        );
+        this.setValue("showMediaEventIds", null, SettingLevel.DEVICE, newValue);
+
+        localStorage.setItem(MIGRATION_DONE_FLAG, "true");
+    }
+
+    /**
      * Runs or queues any setting migrations needed.
      */
     public static runMigrations(isFreshLogin: boolean): void {
@@ -699,6 +725,12 @@ export default class SettingsStore {
         // The consequences of missing the migration are only that URL previews will
         // be disabled in E2EE rooms.
         SettingsStore.migrateURLPreviewsE2EE(isFreshLogin);
+
+        // This can be removed once enough users have run a version of Element with
+        // this migration.
+        // The consequences of missing the migration are that previously shown images
+        // will now be hidden again, so this fails safely.
+        SettingsStore.migrateShowImagesToSettings();
 
         // Dev notes: to add your migration, just add a new `migrateMyFeature` function, call it, and
         // add a comment to note when it can be removed.

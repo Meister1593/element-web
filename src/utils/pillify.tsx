@@ -7,15 +7,14 @@ Please see LICENSE files in the repository root for full details.
 */
 
 import React, { StrictMode } from "react";
-import { PushProcessor } from "matrix-js-sdk/src/pushprocessor";
-import { MatrixClient, MatrixEvent, RuleId } from "matrix-js-sdk/src/matrix";
+import { type MatrixClient, type MatrixEvent, RuleId } from "matrix-js-sdk/src/matrix";
 import { TooltipProvider } from "@vector-im/compound-web";
 
 import SettingsStore from "../settings/SettingsStore";
 import { Pill, pillRoomNotifLen, pillRoomNotifPos, PillType } from "../components/views/elements/Pill";
 import { parsePermalink } from "./permalinks/Permalinks";
-import { PermalinkParts } from "./permalinks/PermalinkConstructor";
-import { ReactRootManager } from "./react";
+import { type PermalinkParts } from "./permalinks/PermalinkConstructor";
+import { type ReactRootManager } from "./react";
 
 /**
  * A node here is an A element with a href attribute tag.
@@ -119,11 +118,10 @@ export function pillifyLinks(
             }
 
             if (roomNotifTextNodes.length > 0) {
-                const pushProcessor = new PushProcessor(matrixClient);
-                const atRoomRule = pushProcessor.getPushRuleById(
+                const atRoomRule = matrixClient.pushProcessor.getPushRuleById(
                     mxEvent.getContent()["m.mentions"] !== undefined ? RuleId.IsRoomMention : RuleId.AtRoomNotification,
                 );
-                if (atRoomRule && pushProcessor.ruleMatchesEvent(atRoomRule, mxEvent)) {
+                if (atRoomRule && matrixClient.pushProcessor.ruleMatchesEvent(atRoomRule, mxEvent)) {
                     // Now replace all those nodes with Pills
                     for (const roomNotifTextNode of roomNotifTextNodes) {
                         // Set the next node to be processed to the one after the node

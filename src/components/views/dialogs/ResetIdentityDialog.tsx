@@ -5,7 +5,7 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
-import React, { type MouseEventHandler } from "react";
+import React, { type JSX, type MouseEventHandler } from "react";
 
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
@@ -16,14 +16,11 @@ interface ResetIdentityDialogProps {
      * Called when the dialog closes.
      */
     onFinished: () => void;
+
     /**
-     * Called when the identity is reset.
+     * Called when the identity is reset (before onFinished is called).
      */
-    onResetFinished: MouseEventHandler<HTMLButtonElement>;
-    /**
-     * Called when the cancel button is clicked.
-     */
-    onCancelClick: () => void;
+    onReset: MouseEventHandler<HTMLButtonElement>;
 
     /**
      * Which variant of this dialog to show.
@@ -34,28 +31,19 @@ interface ResetIdentityDialogProps {
 /**
  * The dialog for resetting the identity of the current user.
  */
-export function ResetIdentityDialog({
-    onFinished,
-    onCancelClick,
-    onResetFinished,
-    variant,
-}: ResetIdentityDialogProps): JSX.Element {
+export function ResetIdentityDialog({ onFinished, onReset, variant }: ResetIdentityDialogProps): JSX.Element {
     const matrixClient = MatrixClientPeg.safeGet();
 
     // Wrappers for ResetIdentityBody's callbacks so that onFinish gets called
     // whenever the reset is done, whether by completing successfully, or by
     // being cancelled
     const onResetWrapper: MouseEventHandler<HTMLButtonElement> = (...args) => {
+        onReset(...args);
         onFinished();
-        onResetFinished(...args);
-    };
-    const onCancelWrapper: () => void = () => {
-        onFinished();
-        onCancelClick();
     };
     return (
         <MatrixClientContext.Provider value={matrixClient}>
-            <ResetIdentityBody onFinish={onResetWrapper} onCancelClick={onCancelWrapper} variant={variant} />
+            <ResetIdentityBody onReset={onResetWrapper} onCancelClick={onFinished} variant={variant} />
         </MatrixClientContext.Provider>
     );
 }

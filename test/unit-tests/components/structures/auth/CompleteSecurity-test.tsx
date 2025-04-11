@@ -6,7 +6,7 @@ Please see LICENSE files in the repository root for full details.
 */
 
 import React from "react";
-import { render, screen } from "jest-matrix-react";
+import { act, render, screen } from "jest-matrix-react";
 import { mocked } from "jest-mock";
 import EventEmitter from "events";
 
@@ -75,5 +75,20 @@ describe("CompleteSecurity", () => {
         render(<CompleteSecurity onFinished={() => {}} />);
 
         expect(screen.queryByRole("button", { name: "Skip verification for now" })).not.toBeInTheDocument();
+    });
+
+    it("Renders a warning if user hits Reset", async () => {
+        // Given a store and a dialog based on it
+        const store = new SetupEncryptionStore();
+        jest.spyOn(SetupEncryptionStore, "sharedInstance").mockReturnValue(store);
+        const panel = await act(() => render(<CompleteSecurity onFinished={() => {}} />));
+
+        // When we hit reset
+        await act(async () => panel.getByRole("button", { name: "Proceed with reset" }).click());
+        //await act(async () => store.reset());
+
+        // Then the title and button update
+        expect(screen.getByRole("heading", { name: "Verify this device" })).toBeInTheDocument();
+        expect(panel.getByRole("button", { name: "Continue" })).toBeInTheDocument();
     });
 });

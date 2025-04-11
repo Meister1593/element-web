@@ -22,7 +22,8 @@ interface ResetIdentityBodyProps {
     /**
      * Called when the identity is reset.
      */
-    onFinish: MouseEventHandler<HTMLButtonElement>;
+    onReset: MouseEventHandler<HTMLButtonElement>;
+
     /**
      * Called when the cancel button is clicked.
      */
@@ -53,7 +54,7 @@ export type ResetIdentityBodyVariant = "compromised" | "forgot" | "sync_failed" 
  *
  * Used by {@link ResetIdentityPanel}.
  */
-export function ResetIdentityBody({ onCancelClick, onFinish, variant }: ResetIdentityBodyProps): JSX.Element {
+export function ResetIdentityBody({ onCancelClick, onReset, variant }: ResetIdentityBodyProps): JSX.Element {
     const matrixClient = useMatrixClientContext();
 
     // After the user clicks "Continue", we disable the button so it can't be
@@ -85,7 +86,7 @@ export function ResetIdentityBody({ onCancelClick, onFinish, variant }: ResetIde
                         await matrixClient
                             .getCrypto()
                             ?.resetEncryption((makeRequest) => uiAuthCallback(matrixClient, makeRequest));
-                        onFinish(evt);
+                        onReset(evt);
                     }}
                 >
                     {inProgress ? (

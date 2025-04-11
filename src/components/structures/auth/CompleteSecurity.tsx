@@ -75,12 +75,9 @@ export default class CompleteSecurity extends React.Component<IProps, IState> {
         } else if (phase === Phase.ConfirmSkip) {
             icon = <span className="mx_CompleteSecurity_headerIcon mx_E2EIcon_warning" />;
             title = _t("common|are_you_sure");
-        } else if (phase === Phase.Busy) {
+        } else if (phase === Phase.Busy || phase === Phase.ConfirmReset) {
             icon = <span className="mx_CompleteSecurity_headerIcon mx_E2EIcon_warning" />;
             title = _t("encryption|verification|after_new_login|verify_this_device");
-        } else if (phase === Phase.ConfirmReset) {
-            icon = <span className="mx_CompleteSecurity_headerIcon mx_E2EIcon_warning" />;
-            title = _t("encryption|verification|after_new_login|reset_confirmation");
         } else if (phase === Phase.Finished) {
             // SetupEncryptionBody will take care of calling onFinished, we don't need to do anything
         } else {

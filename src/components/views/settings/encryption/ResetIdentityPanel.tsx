@@ -15,7 +15,8 @@ interface ResetIdentityPanelProps {
     /**
      * Called when the identity is reset.
      */
-    onFinish: MouseEventHandler<HTMLButtonElement>;
+    onReset: MouseEventHandler<HTMLButtonElement>;
+
     /**
      * Called when the cancel button is clicked or when we go back in the breadcrumbs.
      */
@@ -32,7 +33,7 @@ interface ResetIdentityPanelProps {
  *
  * A thin wrapper around {@link ResetIdentityBody}, just adding breadcrumbs.
  */
-export function ResetIdentityPanel({ onCancelClick, onFinish, variant }: ResetIdentityPanelProps): JSX.Element {
+export function ResetIdentityPanel({ onCancelClick, onReset, variant }: ResetIdentityPanelProps): JSX.Element {
     return (
         <>
             <Breadcrumb
@@ -41,7 +42,7 @@ export function ResetIdentityPanel({ onCancelClick, onFinish, variant }: ResetId
                 pages={[_t("settings|encryption|title"), _t("settings|encryption|advanced|breadcrumb_page")]}
                 onPageClick={onCancelClick}
             />
-            <ResetIdentityBody onFinish={onFinish} onCancelClick={onCancelClick} variant={variant} />
+            <ResetIdentityBody onReset={onReset} onCancelClick={onCancelClick} variant={variant} />
         </>
     );
 }

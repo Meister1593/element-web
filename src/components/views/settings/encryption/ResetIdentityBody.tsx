@@ -36,15 +36,17 @@ interface ResetIdentityBodyProps {
 }
 
 /**
- * "compromised" is shown when the user chooses 'reset' explicitly in settings, usually because they believe their
- * identity has been compromised.
+ * "compromised" is shown when the user chose 'Reset cryptographic identity' explicitly in settings, usually because
+ * they believe their identity has been compromised.
  *
  * "sync_failed" is shown when the user tried to recover their identity but the process failed, probably because
  * the required information is missing from recovery.
  *
- * "forgot" is shown when the user has just forgotten their passphrase.
+ * "forgot" is shown when the user chose 'Forgot recovery key?' during `SetupEncryptionToast`.
+ *
+ * "confirm" is shown when the user chose 'Reset all' during `SetupEncryptionBody`.
  */
-export type ResetIdentityBodyVariant = "compromised" | "forgot" | "sync_failed";
+export type ResetIdentityBodyVariant = "compromised" | "forgot" | "sync_failed" | "confirm";
 
 /**
  * User interface component allowing the user to reset their cryptographic identity.
@@ -113,11 +115,10 @@ export function ResetIdentityBody({ onCancelClick, onFinish, variant }: ResetIde
 function titleForVariant(variant: ResetIdentityBodyVariant): string {
     switch (variant) {
         case "compromised":
+        case "confirm":
             return _t("settings|encryption|advanced|breadcrumb_title");
         case "sync_failed":
             return _t("settings|encryption|advanced|breadcrumb_title_sync_failed");
-
-        default:
         case "forgot":
             return _t("settings|encryption|advanced|breadcrumb_title_forgot");
     }

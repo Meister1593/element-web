@@ -145,4 +145,36 @@ test.describe("Encryption tab", () => {
             }
         });
     });
+
+    test.describe("when encryption is not set up", () => {
+        test("'Verify this device' allows us to become verified", async ({
+            page,
+            user,
+            credentials,
+            app,
+        }, workerInfo) => {
+            const settings = await app.settings.openUserSettings("Encryption");
+
+            // Initially, our device is not verified
+            await expect(settings.getByRole("heading", { name: "Device not verified" })).toBeVisible();
+
+            // We will reset our identity
+            await settings.getByRole("button", { name: "Verify this device" }).click();
+            await page.getByRole("button", { name: "Proceed with reset" }).click();
+
+            // First try cancelling and restarting
+            await page.getByRole("button", { name: "Cancel" }).click();
+            await page.getByRole("button", { name: "Proceed with reset" }).click();
+
+            // Then click outside the dialog and restart
+            await page.locator("li").filter({ hasText: "Encryption" }).click({ force: true });
+            await page.getByRole("button", { name: "Proceed with reset" }).click();
+
+            // Finally we actually continue
+            await page.getByRole("button", { name: "Continue" }).click();
+
+            // Now we are verified, so we see the Key storage toggle
+            await expect(settings.getByRole("heading", { name: "Key storage" })).toBeVisible();
+        });
+    });
 });

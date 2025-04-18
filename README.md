@@ -1,6 +1,6 @@
 [![Chat](https://img.shields.io/matrix/element-web:matrix.org?logo=matrix)](https://matrix.to/#/#element-web:matrix.org)
-![Tests](https://github.com/element-hq/element-web/actions/workflows/tests.yaml/badge.svg)
-![Static Analysis](https://github.com/element-hq/element-web/actions/workflows/static_analysis.yaml/badge.svg)
+![Tests](https://github.com/Meister1593/element-web/actions/workflows/tests.yaml/badge.svg)
+![Static Analysis](https://github.com/Meister1593/element-web/actions/workflows/static_analysis.yaml/badge.svg)
 [![Localazy](https://img.shields.io/endpoint?url=https%3A%2F%2Fconnect.localazy.com%2Fstatus%2Felement-web%2Fdata%3Fcontent%3Dall%26title%3Dlocalazy%26logo%3Dtrue)](https://localazy.com/p/element-web)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=element-web&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=element-web)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=element-web&metric=coverage)](https://sonarcloud.io/summary/new_code?id=element-web)
@@ -42,8 +42,7 @@ Element has several tiers of support for different environments:
 The period of support for these tiers should last until the releases specified above, plus 1 app release cycle(2 weeks). In the case of Firefox ESR this is extended further to allow it land in Debian Stable.
 
 For accessing Element on an Android or iOS device, we currently recommend the
-native apps [element-android](https://github.com/element-hq/element-android)
-and [element-ios](https://github.com/element-hq/element-ios).
+native apps [element-android](https://github.com/Meister1593/element-android).
 
 # Getting Started
 
@@ -121,7 +120,7 @@ guide](https://classic.yarnpkg.com/en/docs/install) if you do not have it alread
 
 1. Install or update `node.js` so that your `node` is at least the current recommended LTS.
 1. Install `yarn` if not present already.
-1. Clone the repo: `git clone https://github.com/element-hq/element-web.git`.
+1. Clone the repo: `git clone https://github.com/Meister1593/element-web.git`.
 1. Switch to the element-web directory: `cd element-web`.
 1. Install the prerequisites: `yarn install`.
     - If you're using the `develop` branch, then it is recommended to set up a
@@ -147,7 +146,7 @@ Element can also be run as a desktop app, wrapped in Electron. You can download 
 pre-built version from <https://element.io/get-started> or, if you prefer,
 build it yourself.
 
-To build it yourself, follow the instructions at <https://github.com/element-hq/element-desktop>.
+To build it yourself, follow the instructions at <https://github.com/Meister1593/element-desktop>.
 
 Many thanks to @aviraldg for the initial work on the Electron integration.
 
@@ -161,7 +160,7 @@ See the [configuration docs](docs/config.md) for more details.
 # Labs Features
 
 Some features of Element may be enabled by flags in the `Labs` section of the settings.
-Some of these features are described in [labs.md](https://github.com/element-hq/element-web/blob/develop/docs/labs.md).
+Some of these features are described in [labs.md](https://github.com/Meister1593/element-web/blob/develop/docs/labs.md).
 
 # Caching requirements
 
@@ -194,23 +193,15 @@ To add a new translation, head to the [translating doc](docs/translating.md).
 
 For a developer guide, see the [translating dev doc](docs/translating-dev.md).
 
-# Triaging issues
-
-Issues are triaged by community members and the Web App Team, following the [triage process](https://github.com/element-hq/element-meta/wiki/Triage-process).
-
-We use [issue labels](https://github.com/element-hq/element-meta/wiki/Issue-labelling) to sort all incoming issues.
-
 ## Copyright & License
 
 Copyright (c) 2014-2017 OpenMarket Ltd
 Copyright (c) 2017 Vector Creations Ltd
 Copyright (c) 2017-2025 New Vector Ltd
+Copyright (c) 2025 Meister1593
 
-This software is multi licensed by New Vector Ltd (Element). It can be used either:
+This software is multi licensed by Meister1593. It can be used either:
 
 (1) for free under the terms of the GNU Affero General Public License (as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version); OR
 
-(2) for free under the terms of the GNU General Public License (as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version); OR
-
-(3) under the terms of a paid-for Element Commercial License agreement between you and Element (the terms of which may vary depending on what you and Element have agreed to).
-Unless required by applicable law or agreed to in writing, software distributed under the Licenses is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licenses for the specific language governing permissions and limitations under the Licenses.
+(2) for free under the terms of the GNU General Public License (as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version).

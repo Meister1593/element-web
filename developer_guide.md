@@ -36,7 +36,7 @@ popd
 Clone the repo and switch to the `element-web` directory:
 
 ```bash
-git clone https://github.com/element-hq/element-web.git
+git clone https://github.com/Meister1593/element-web.git
 cd element-web
 ```
 
@@ -121,6 +121,6 @@ See [matrix-react-sdk](https://github.com/matrix-org/matrix-react-sdk/#end-to-en
 
 New code should be committed as follows:
 
-- All new components: https://github.com/element-hq/element-web/tree/develop/src/components
-- CSS: https://github.com/element-hq/element-web/tree/develop/res/css
-- Theme specific CSS & resources: https://github.com/element-hq/element-web/tree/develop/res/themes
+- All new components: https://github.com/Meister1593/element-web/tree/develop/src/components
+- CSS: https://github.com/Meister1593/element-web/tree/develop/res/css
+- Theme specific CSS & resources: https://github.com/Meister1593/element-web/tree/develop/res/themes

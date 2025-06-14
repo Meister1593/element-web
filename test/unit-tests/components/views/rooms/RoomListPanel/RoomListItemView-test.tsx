@@ -51,12 +51,21 @@ describe("<RoomListItemView />", () => {
             hasParticipantInCall: false,
             name: room.name,
             showNotificationDecoration: false,
+            messagePreview: undefined,
         };
 
         mocked(useRoomListItemViewModel).mockReturnValue(defaultValue);
     });
 
     test("should render a room item", () => {
+        const onClick = jest.fn();
+        const { asFragment } = render(<RoomListItemView room={room} onClick={onClick} isSelected={false} />);
+        expect(asFragment()).toMatchSnapshot();
+    });
+
+    test("should render a room item with a message preview", () => {
+        defaultValue.messagePreview = "The message looks list this";
+
         const onClick = jest.fn();
         const { asFragment } = render(<RoomListItemView room={room} onClick={onClick} isSelected={false} />);
         expect(asFragment()).toMatchSnapshot();
@@ -80,6 +89,17 @@ describe("<RoomListItemView />", () => {
 
         await user.hover(listItem);
         await waitFor(() => expect(screen.getByRole("button", { name: "More Options" })).toBeInTheDocument());
+    });
+
+    test("should hover decoration if focused", async () => {
+        const user = userEvent.setup();
+        render(<RoomListItemView room={room} isSelected={false} />, withClientContextRenderOptions(matrixClient));
+        const listItem = screen.getByRole("button", { name: `Open room ${room.name}` });
+        await user.click(listItem);
+        expect(listItem).toHaveClass("mx_RoomListItemView_hover");
+
+        await user.tab();
+        await waitFor(() => expect(listItem).not.toHaveClass("mx_RoomListItemView_hover"));
     });
 
     test("should be selected if isSelected=true", async () => {

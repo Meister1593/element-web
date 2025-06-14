@@ -661,25 +661,13 @@
     "empty_room": "ຫ້ອງຫວ່າງ",
     "encryption": {
         "access_secret_storage_dialog": {
-            "enter_phrase_or_key_prompt": "ກະລຸນາໃສ່ປະໂຫຍກຄວາມປອດໄພຂອງທ່ານ ຫຼື <button>ໃຊ້ກະແຈຄວາມປອດໄພຂອງທ່ານ</button> ເພື່ອສືບຕໍ່.",
             "key_validation_text": {
-                "invalid_security_key": "ກະແຈຄວາມປອດໄພບໍ່ຖືກຕ້ອງ",
-                "recovery_key_is_correct": "ດີ!",
-                "wrong_file_type": "ປະເພດໄຟລ໌ບໍ່ຖຶກຕ້ອງ",
                 "wrong_security_key": "ກະແຈຄວາມປອດໄພບໍ່ຖຶກຕ້ອງ"
             },
-            "reset_title": "ຕັ້ງຄ່າໃໝ່ທຸກຢ່າງ",
-            "reset_warning_1": "ເຮັດແນວນີ້ກໍ່ຕໍ່ເມື່ອທ່ານບໍ່ມີອຸປະກອນອື່ນເພື່ອການຢັ້ງຢືນດ້ວຍ.",
-            "reset_warning_2": "ຖ້າທ່ານຕັ້ງຄ່າຄືນໃໝ່ທຸກຢ່າງ, ທ່ານຈະຣີສະຕາດໂດຍບໍ່ມີລະບົບທີ່ເຊື່ອຖືໄດ້, ບໍ່ມີຜູ້ໃຊ້ທີ່ເຊື່ອຖືໄດ້ ແລະ ອາດຈະບໍ່ເຫັນຂໍ້ຄວາມທີ່ຜ່ານມາ.",
             "restoring": "ການຟື້ນຟູລະຫັດຈາກການສໍາຮອງຂໍ້ມູນ",
-            "security_key_title": "ກະແຈຄວາມປອດໄພ",
-            "security_phrase_incorrect_error": "ບໍ່ສາມາດເຂົ້າເຖິງບ່ອນເກັບຂໍ້ມູນລັບໄດ້. ກະລຸນາກວດສອບວ່າທ່ານໃສ່ປະໂຫຍກຄວາມປອດໄພທີ່ຖືກຕ້ອງ.",
-            "security_phrase_title": "ປະໂຫຍກລະຫັດຄວາມປອດໄພ",
-            "use_security_key_prompt": "ໃຊ້ກະແຈຄວາມປອດໄພຂອງທ່ານເພື່ອສືບຕໍ່."
+            "security_key_title": "ກະແຈຄວາມປອດໄພ"
         },
         "bootstrap_title": "ການຕັ້ງຄ່າກະແຈ",
-        "cancel_entering_passphrase_description": "ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການຍົກເລີກການໃສ່ປະໂຫຍກລະຫັດຜ່ານ?",
-        "cancel_entering_passphrase_title": "ຍົກເລີກການໃສ່ປະໂຫຍກລະຫັດຜ່ານບໍ?",
         "confirm_encryption_setup_body": "ກົດທີ່ປຸ່ມຂ້າງລຸ່ມນີ້ເພື່ອຢືນຢັນການຕັ້ງຄ່າການເຂົ້າລະຫັດ.",
         "confirm_encryption_setup_title": "ຢືນຢັນການຕັ້ງຄ່າການເຂົ້າລະຫັດ",
         "cross_signing_room_normal": "ຫ້ອງນີ້ຖືກເຂົ້າລະຫັດແບບຕົ້ນທາງ-ເຖິງປາຍທາງ",
@@ -731,7 +719,6 @@
             "accepting": "ກຳລັງຍອມຮັບ…",
             "after_new_login": {
                 "device_verified": "ຢັ້ງຢືນອຸປະກອນແລ້ວ",
-                "reset_confirmation": "ຕັ້ງຄ່າຢືນຢັນກະແຈຄືນໃໝ່ບໍ?",
                 "skip_verification": "ຂ້າມການຢັ້ງຢືນດຽວນີ້",
                 "unable_to_verify": "ບໍ່ສາມາດຢັ້ງຢືນອຸປະກອນນີ້ໄດ້",
                 "verify_this_device": "ຢັ້ງຢືນອຸປະກອນນີ້"
@@ -793,7 +780,6 @@
             "verify_emoji_prompt": "ຢັ້ງຢືນໂດຍການປຽບທຽບ emoji ທີ່ເປັນເອກະລັກ.",
             "verify_emoji_prompt_qr": "ຖ້າທ່ານບໍ່ສາມາດສະແກນລະຫັດຂ້າງເທິງໄດ້, ໃຫ້ກວດສອບໂດຍການປຽບທຽບອີໂມຈິທີ່ເປັນເອກະລັກ.",
             "verify_later": "ຂ້ອຍຈະກວດສອບພາຍຫຼັງ",
-            "verify_reset_warning_1": "ການຕັ້ງຄ່າລະຫັດຢືນຢັນຂອງທ່ານບໍ່ສາມາດຍົກເລີກໄດ້. ຫຼັງຈາກການຕັ້ງຄ່າແລ້ວ, ທ່ານຈະບໍ່ສາມາດເຂົ້າເຖິງຂໍ້ຄວາມທີ່ເຂົ້າລະຫັດເກົ່າໄດ້, ແລະ ໝູ່ເພື່ອນທີ່ຢືນຢັນໄປກ່ອນໜ້ານີ້ ທ່ານຈະເຫັນຄຳເຕືອນຄວາມປອດໄພຈົນກວ່າທ່ານຈະຢືນຢັນກັບພວກມັນຄືນໃໝ່.",
             "verify_using_device": "ຢັ້ງຢືນດ້ວຍອຸປະກອນອື່ນ",
             "verify_using_key": "ຢືນຢັນດ້ວຍກະແຈຄວາມປອດໄພ",
             "verify_using_key_or_phrase": "ຢືນຢັນດ້ວຍກະແຈຄວາມປອດໄພ ຫຼືປະໂຫຍກ",
@@ -1931,7 +1917,6 @@
             "remove_email_prompt": "ລຶບ %(email)s ອອກບໍ?",
             "remove_msisdn_prompt": "ລຶບ %(phone)sອອກບໍ?"
         },
-        "image_thumbnails": "ສະແດງຕົວຢ່າງ/ຮູບຕົວຢ່າງສຳລັບຮູບພາບ",
         "inline_url_previews_default": "ເປີດໃຊ້ການສະແດງຕົວຢ່າງ URL ໃນແຖວຕາມຄ່າເລີ່ມຕົ້ນ",
         "inline_url_previews_room": "ເປີດໃຊ້ການສະແດງຕົວຢ່າງ URL ໂດຍຄ່າເລີ່ມຕົ້ນສໍາລັບຜູ້ເຂົ້າຮ່ວມໃນຫ້ອງນີ້",
         "inline_url_previews_room_account": "ເປີດໃຊ້ຕົວຢ່າງ URL ສໍາລັບຫ້ອງນີ້ (ມີຜົນຕໍ່ທ່ານເທົ່ານັ້ນ)",
@@ -2181,8 +2166,6 @@
         "topic": "ໄດ້ຮັບ ຫຼື ກໍານົດຫົວຂໍ້ຫ້ອງ",
         "topic_none": "ຫ້ອງນີ້ບໍ່ມີຫົວຂໍ້.",
         "topic_room_error": "ໂຫຼດຫົວຂໍ້ຫ້ອງບໍ່ສຳເລັດ: ບໍ່ສາມາດຊອກຫາຫ້ອງ (%(roomId)s",
-        "tovirtual": "ສະຫຼັບໄປໃຊ້ຫ້ອງສະເໝືອນຈິງ, ຖ້າມີອີກຫ້ອງໜຶ່ງ",
-        "tovirtual_not_found": "ບໍ່ມີຫ້ອງສະເໝືອນຈິງສຳລັບຫ້ອງນີ້",
         "unban": "ຍົກເລີກການຫ້າມຜູ້ໃຊ້ທີ່ມີ ID",
         "unflip": "ນຳໜ້າ ┬──┬ ノ( ゜-゜ノ)ເປັນຂໍ້ຄວາມທຳມະດາ",
         "unholdcall": "ການຮັບສາຍໃນຫ້ອງປະຈຸບັນຖຶກປິດໄວ້",
@@ -2197,6 +2180,7 @@
         "upgraderoom": "ຍົກລະດັບຫ້ອງເປັນລຸ້ນໃໝ່",
         "upgraderoom_permission_error": "ທ່ານບໍ່ມີສິດໃຊ້ຄໍາສັ່ງນີ້.",
         "usage": "ການນໍາໃຊ້",
+        "verify": "ຢືນຢັນຜູ້ໃຊ້, ລະບົບ, ແລະ pubkey tuple",
         "whois": "ສະແດງຂໍ້ມູນກ່ຽວກັບຜູ້ໃຊ້"
     },
     "space": {
@@ -2288,13 +2272,11 @@
         "heading_with_query": "ໃຊ້ \"%(query)s\" ເພື່ອຊອກຫາ",
         "join_button_text": "ເຂົ້າຮ່ວມ %(roomAddress)s",
         "keyboard_scroll_hint": "ໃຊ້ <arrows/> ເພື່ອເລື່ອນ",
-        "message_search_section_title": "ການຄົ້ນຫາອື່ນໆ",
         "other_rooms_in_space": "ຫ້ອງອື່ນໆ%(spaceName)s",
         "public_rooms_label": "ຫ້ອງສາທາລະນະ",
         "recent_searches_section_title": "ການຄົ້ນຫາທີ່ຜ່ານມາ",
         "recently_viewed_section_title": "ເບິ່ງເມື່ອບໍ່ດົນມານີ້",
         "search_dialog": "ຊອກຫາ ກ່ອງໂຕ້ຕອບ",
-        "search_messages_hint": "ເພື່ອຊອກຫາຂໍ້ຄວາມ, ຊອກຫາໄອຄອນນີ້ຢູ່ເທິງສຸດຂອງຫ້ອງ <icon/>",
         "spaces_title": "ຊ່ອງທີ່ທ່ານຢູ່"
     },
     "stickers": {

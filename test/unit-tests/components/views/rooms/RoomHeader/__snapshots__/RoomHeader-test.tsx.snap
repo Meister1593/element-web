@@ -45,7 +45,8 @@ exports[`RoomHeader dm does not show the face pile for DMs 1`] = `
     <button
       aria-disabled="true"
       aria-label="There's no one here to call"
-      class="_icon-button_m2erp_8"
+      class="_icon-button_1pz9o_8"
+      data-kind="primary"
       role="button"
       style="--cpd-icon-button-size: 32px;"
       tabindex="0"
@@ -55,7 +56,7 @@ exports[`RoomHeader dm does not show the face pile for DMs 1`] = `
         style="--cpd-icon-button-size: 100%; --cpd-color-icon-tertiary: var(--cpd-color-icon-disabled);"
       >
         <svg
-          aria-labelledby="«r1c8»"
+          aria-labelledby="«r1do»"
           fill="currentColor"
           height="1em"
           viewBox="0 0 24 24"
@@ -71,8 +72,9 @@ exports[`RoomHeader dm does not show the face pile for DMs 1`] = `
     <button
       aria-disabled="true"
       aria-label="There's no one here to call"
-      aria-labelledby="«r1cd»"
-      class="_icon-button_m2erp_8"
+      aria-labelledby="«r1dt»"
+      class="_icon-button_1pz9o_8"
+      data-kind="primary"
       role="button"
       style="--cpd-icon-button-size: 32px;"
       tabindex="0"
@@ -96,8 +98,9 @@ exports[`RoomHeader dm does not show the face pile for DMs 1`] = `
     </button>
     <button
       aria-label="Threads"
-      aria-labelledby="«r1ci»"
-      class="_icon-button_m2erp_8"
+      aria-labelledby="«r1e2»"
+      class="_icon-button_1pz9o_8"
+      data-kind="primary"
       role="button"
       style="--cpd-icon-button-size: 32px;"
       tabindex="0"
@@ -122,8 +125,9 @@ exports[`RoomHeader dm does not show the face pile for DMs 1`] = `
     </button>
     <button
       aria-label="Room info"
-      aria-labelledby="«r1cn»"
-      class="_icon-button_m2erp_8"
+      aria-labelledby="«r1e7»"
+      class="_icon-button_1pz9o_8"
+      data-kind="primary"
       role="button"
       style="--cpd-icon-button-size: 32px;"
       tabindex="0"

@@ -557,25 +557,13 @@
     "empty_room_was_name": "اتاق خالی (نام قبلی: %(oldName)s)",
     "encryption": {
         "access_secret_storage_dialog": {
-            "enter_phrase_or_key_prompt": "عبارت امنیتی خود را وارد کنید و یا <button>کلید امنیتی خود را استفاده کنید</button>.",
             "key_validation_text": {
-                "invalid_security_key": "کلید امنیتی نامعتبر است",
-                "recovery_key_is_correct": "به نظر خوب میاد!",
-                "wrong_file_type": "نوع فایل اشتباه است",
                 "wrong_security_key": "کلید امنیتی اشتباه است"
             },
-            "reset_title": "همه چیز را بازراه‌اندازی (reset) کنید",
-            "reset_warning_1": "این کار را فقط درصورتی انجام دهید که دستگاه دیگری برای تکمیل فرآیند تأیید ندارید.",
-            "reset_warning_2": "اگر همه موارد را بازراه‌اندازی (reset) کنید، دیگر هیچ نشست تائید شده‌ای و هیچ کاربر تائيد‌ شده‌ای نخواهید داشت و ممکن است نتوانید پیام‌های گذشته‌ی خود را مشاهده نمائید.",
             "restoring": "بازیابی کلیدها از نسخه پشتیبان",
-            "security_key_title": "کلید امنیتی",
-            "security_phrase_incorrect_error": "دسترسی به حافظه نهان امکان‌پذیر نیست. لطفاً تأیید کنید که عبارت امنیتی صحیح را وارد کرده‌اید.",
-            "security_phrase_title": "عبارت امنیتی",
-            "use_security_key_prompt": "برای ادامه از کلید امنیتی خود استفاده کنید."
+            "security_key_title": "کلید امنیتی"
         },
         "bootstrap_title": "تنظیم کلیدها",
-        "cancel_entering_passphrase_description": "آیا مطمئن هستید که می خواهید وارد کردن عبارت امنیتی را لغو کنید؟",
-        "cancel_entering_passphrase_title": "وارد کردن عبارت امنیتی لغو شود؟",
         "confirm_encryption_setup_body": "برای تأیید و فعال‌سازی رمزگذاری ، روی دکمه زیر کلیک کنید.",
         "confirm_encryption_setup_title": "راه‌اندازی رمزگذاری را تأیید کنید",
         "cross_signing_room_normal": "این اتاق به صورت سرتاسر رمزشده است",
@@ -1501,7 +1489,6 @@
             "remove_email_prompt": "%(email)s را پاک می‌کنید؟",
             "remove_msisdn_prompt": "%(phone)s را پاک می‌کنید؟"
         },
-        "image_thumbnails": "پیش‌نمایش تصاویر را نشان بده",
         "inline_url_previews_default": "فعال‌سازی پیش‌نمایش URL به صورت پیش‌فرض",
         "inline_url_previews_room": "امکان پیش‌نمایش URL را به صورت پیش‌فرض برای اعضای این اتاق فعال کن",
         "inline_url_previews_room_account": "فعال‌سازی پیش‌نمایش URL برای این اتاق (تنها شما را تحت تاثیر قرار می‌دهد)",
@@ -1713,8 +1700,6 @@
         "topic": "موضوع اتاق را دریافت یا تنظیم می‌کند",
         "topic_none": "این اتاق هیچ موضوعی ندارد.",
         "topic_room_error": "خطا در دریافت عنوان اتاق: اتاق %(roomId)s یافت نشد",
-        "tovirtual": "جابجایی به اتاق مجازی این اتاق، اگر یکی وجود داشت",
-        "tovirtual_not_found": "اتاق مجازی برای این اتاق وجود ندارد",
         "unban": "رفع تحریم کاربر با شناسه‌ی مذکور",
         "unflip": "┬──┬ ノ (゜ - ゜ ノ) را به ابتدای یک پیام متنی ساده اضافه می‌کند",
         "unholdcall": "تماس را در اتاق فعلی خاموش نگه می دارد",
@@ -1729,6 +1714,7 @@
         "upgraderoom": "یک اتاق را به نسخه جدید ارتقا دهید",
         "upgraderoom_permission_error": "شما مجوزهای لازم را برای استفاده از این دستور ندارید.",
         "usage": "استفاده",
+        "verify": "یک کاربر، نشست و عبارت کلید عمومی را تائید می‌کند",
         "whois": "اطلاعات مربوط به کاربر را نمایش می دهد"
     },
     "space": {
